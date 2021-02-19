@@ -1,0 +1,50 @@
+* {
+    font-family: 'Arvo', serif;
+}
+
+html {
+    background-color: #FDFDED;
+}
+
+body {
+    margin: 0;
+}
+
+input[type=text] {
+    padding: 0.7rem;
+    margin: 0.5rem;
+    text-align: center;
+    border-radius: 2rem;
+    font-size: 150%;
+}
+
+button {
+    padding: 0.7rem;
+    margin: 0.5rem;
+    text-align: center;
+    border-radius: 2rem;
+    background-color: #6B5C44;
+    color: #FDFDED;
+}
+
+.header {
+    background-color: #FEE372;
+    padding: 1px;
+    text-align: center;
+}
+
+.tealBlock {
+    background-color: #7EC8C2;
+    padding: 1rem;
+}
+
+.priceBlock {
+    background-color: #FDFDED;
+    width: 40%;
+    padding: 0.5rem;
+    text-align: center;
+    margin: 0 auto;
+    border: 1rem solid #dcdc87;
+    border-radius: 2rem;
+    color: #6B5C44;
+}
