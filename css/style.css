@@ -78,7 +78,9 @@ and (max-device-width: 480px) {
 }
 
 /* Smartphones (landscape) ----------- */
-@media only screen and (min-width: 321px) {
+@media screen and (orientation:landscape)
+and (min-device-width: 319px) 
+and (max-device-width: 480px) {
     .priceBlock {
         width: 75%;
     }
