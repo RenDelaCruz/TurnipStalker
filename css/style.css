@@ -20,7 +20,7 @@ input[type=text] {
 }
 
 button {
-    padding: 1px 20px;
+    padding: 1px 1.5rem;
     margin: 0.5rem;
     text-align: center;
     border-radius: 2rem;
@@ -49,35 +49,45 @@ button {
     color: #6B5C44;
 }
 
+/* unvisited link */
+a:link, a:visited, a:hover {
+    color: #6B5C44;
+}
+
+/* selected link */
+a:active {
+    color: blue;
+}
+
 #info {
     margin: 2% 20%;
 }
 
 /* Smartphones (portrait and landscape) ----------- */
-@media only screen 
-and (min-device-width : 320px) 
-and (max-device-width : 480px) {
-/* Styles */
-}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {}
 
 /* Smartphones (portrait) ----------- */
-@media only screen 
-and (max-width : 320px) {
+@media only screen and (max-width: 320px) {
     #info {
-        margin: 0;
+        margin: 2% 10%;
     }
 }
 
 /* Smartphones (landscape) ----------- */
-@media only screen 
-and (min-width : 321px) {
+@media only screen and (min-width: 321px) {
     .priceBlock {
         width: 75%;
     }
 }
 
+@media only screen and (orientation: landscape) {
+    .priceBlock {
+        width: 40%;
+    }
+}
+
 /* Desktops and laptops ----------- */
-@media only screen and (min-width : 1224px) {
+@media only screen and (min-width: 1224px) {
     .priceBlock {
         width: 40%;
     }
