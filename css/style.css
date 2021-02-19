@@ -60,11 +60,15 @@ a:active {
 }
 
 #info {
-    margin: 2% 20%;
+    margin: 2% 25%;
 }
 
 /* Smartphones (portrait and landscape) ----------- */
-@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {}
+@media only screen 
+and (min-device-width: 320px) 
+and (max-device-width: 480px) {
+
+}
 
 /* Smartphones (portrait) ----------- */
 @media only screen and (max-width: 320px) {
@@ -82,13 +86,10 @@ a:active {
 
 @media only screen and (orientation: landscape) {
     .priceBlock {
-        width: 40%;
+        width: calc(100vh - 110px);
     }
 }
 
 /* Desktops and laptops ----------- */
 @media only screen and (min-width: 1224px) {
-    .priceBlock {
-        width: 40%;
-    }
 }
