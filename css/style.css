@@ -56,6 +56,12 @@ and (max-device-width : 480px) {
 /* Styles */
 }
 
+/* Smartphones (portrait) ----------- */
+@media only screen 
+and (max-width : 320px) {
+
+}
+
 /* Smartphones (landscape) ----------- */
 @media only screen 
 and (min-width : 321px) {
@@ -66,12 +72,6 @@ and (min-width : 321px) {
     #info {
         margin: 2% 10%;
     }
-}
-
-/* Smartphones (portrait) ----------- */
-@media only screen 
-and (max-width : 320px) {
-
 }
 
 /* Desktops and laptops ----------- */
