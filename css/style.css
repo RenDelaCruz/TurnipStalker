@@ -1,5 +1,6 @@
-* {
+*, *:before, *:after {
     font-family: 'Arvo', serif;
+    box-sizing: inherit;
 }
 
 html {
@@ -51,7 +52,7 @@ button {
 
 /* unvisited link */
 a:link, a:visited, a:hover {
-    color: #6B5C44;
+    color: inherit;
 }
 
 /* selected link */
@@ -60,7 +61,7 @@ a:active {
 }
 
 #info {
-    margin: 2% 25%;
+    margin: 2% 15%;
 }
 
 /* Smartphones (portrait) ----------- */
@@ -75,13 +76,13 @@ and (max-width: 320px) {
 @media screen and (orientation:landscape)
 and (min-device-width: 320px) {
     .priceBlock {
-        width: 75%;
+        width: 35rem;
     }
 }
 
 /* Desktops and laptops ----------- */
 @media only screen and (min-width: 813px) {
     .priceBlock {
-        width: calc(100vh - 110px);
+        width: 35rem
     }
 }
