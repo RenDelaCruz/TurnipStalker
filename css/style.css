@@ -63,35 +63,45 @@ a:active {
     margin: 2% 25%;
 }
 
-/* Smartphones (portrait and landscape) ----------- */
+/* Phone Portrait */
 @media only screen 
-and (min-device-width: 320px) 
-and (max-device-width: 480px) {
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (orientation: portrait) { 
+    #info {
+        margin: 2% 10%;
+    }
+}
 
+/* Phone Landscape */
+@media only screen
+    and (min-device-width: 375px) 
+    and (max-device-width: 812px) 
+    and (orientation: landscape) { 
+        .priceBlock {
+            width: 75%;
+        }
 }
 
 /* Smartphones (portrait) ----------- */
 @media only screen and (max-width: 320px) {
-    #info {
-        margin: 2% 10%;
-    }
+    
 }
 
 /* Smartphones (landscape) ----------- */
 @media screen and (orientation:landscape)
 and (min-device-width: 319px) 
 and (max-device-width: 480px) {
-    .priceBlock {
-        width: 75%;
-    }
+    
 }
 
 @media only screen and (orientation: landscape) {
-    .priceBlock {
-        width: calc(100vh - 110px);
-    }
+    
 }
 
 /* Desktops and laptops ----------- */
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 813px) {
+    .priceBlock {
+        width: calc(100vh - 110px);
+    }
 }
