@@ -47,7 +47,6 @@ button {
     padding: 0.5rem;
     text-align: center;
     margin: 0 auto;
-    /*border: 1rem solid #F9A362;*/
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: 2rem;
     color: #6B5C44;
@@ -64,7 +63,6 @@ button {
     padding: 0.5rem 1rem;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     color: black;
-    width: 40rem;
     margin: 1rem auto;
 }
 
@@ -116,7 +114,11 @@ and (max-width: 320px) {
 @media screen and (orientation:landscape)
 and (min-device-width: 320px) {
     .priceBlock {
-        width: 35rem;
+        width: auto;
+    }
+
+    .post {
+        width: auto;
     }
 }
 
@@ -124,5 +126,9 @@ and (min-device-width: 320px) {
 @media only screen and (min-width: 813px) {
     .priceBlock {
         width: 35rem
+    }
+
+    .post {
+        width: 40rem;
     }
 }
