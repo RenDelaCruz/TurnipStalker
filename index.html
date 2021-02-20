@@ -12,65 +12,107 @@
     <link rel="manifest" href="icons/site.webmanifest">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <title>Turnip Stalker</title>
 </head>
 
 <body>
-    <div class="header">
-        <h1>&#9662;&#9652;&#9656; Turnip Stalker &#9666;&#9652;&#9662;</h1>
+    <div class="roundBlock">
+        <h1>Turnip Stalker</h1>
+        <p>Filter turnip prices posted on <a href="https://www.reddit.com/r/acturnips/" target="_blank">r/acturnips!</a>
+        </p>
+
+        <h3>Enter the minimum price:</h3>
+
+        <form>
+            <input type="text" id="inputPrice" name="inputPrice" placeholder="Bells"><br>
+            <button type="submit">
+                <h2>Check &#10132;</h2>
+            </button>
+        </form>
     </div>
 
-    <div class="introBlock">
-        <div class="priceBlock">
-            <h3 id="info">Filter turnip prices posted on <a href="https://www.reddit.com/r/acturnips/"
-                    target="_blank">r/acturnips</a> and <a href="https://www.reddit.com/r/ACNHTurnips/"
-                    target="_blank">r/ACNHTurnips</a>!</h3>
-            <p>Enter the minimum price: </p>
+    <p class="center">Posts found: 2</p>
 
-            <form>
-                <input type="text" id="inputPrice" name="inputPrice" placeholder="Bells"><br>
-                <button type="submit">
-                    <h2>Check &#10132;</h2>
-                </button>
-            </form>
+    <div>
+        <div class="roundBlock post">
+            <div class="tagBlock">
+                <strong>513 Bells</strong>
+            </div>
+            <div class="tagBlock" style="background-color: #DEF2FC;">
+                23 minutes ago
+            </div>
+            <a style="text-decoration: none;"
+                href="https://www.reddit.com/r/acturnips/comments/lnublk/sw_tiny_raccoon_children_buying_for_513_bells_each/"
+                target="_blank">
+                <div class="tagBlock button">
+                    Visit Post &#10132;
+                </div>
+            </a>
+            <h3 style="margin-bottom:0;">[SW] Tiny raccoon children buying for 513 bells each!</h3>
+            <p style="margin : 0; padding-top:0;">u/greasy_pigeon in r/acturnips</p>
+        </div>
+
+        <div class="roundBlock post">
+            <div class="tagBlock">
+                <strong>513 Bells</strong>
+            </div>
+            <div class="tagBlock" style="background-color: #DEF2FC;">
+                23 minutes ago
+            </div>
+            <a style="text-decoration: none;"
+                href="https://www.reddit.com/r/acturnips/comments/lnublk/sw_tiny_raccoon_children_buying_for_513_bells_each/"
+                target="_blank">
+                <div class="tagBlock button">
+                    Visit Post &#10132;
+                </div>
+            </a>
+            <h3 style="margin-bottom:0;">[SW] Tiny raccoon children buying for 513 bells each!</h3>
+            <p style="margin : 0; padding-top:0;">u/greasy_pigeon in r/acturnips</p>
         </div>
     </div>
 
-    <div class="postBlock">
-        <div>
-            <p style="margin: 0 auto; text-align: center;">Posts found: 2</p>
-        </div>
 
-        <div class="post">
-            <h3>513 Bells | 23 minutes ago</h3>
-            <h4>[SW] Tiny raccoon children buying for 513 bells each!</h4>
+    <!--
+    <div class="colContainer">
+        <div class="post roundBlock">
+            <div class="tagBlock">
+                <strong>500 Bells</strong>
+            </div>
+            <div class="tagBlock">
+                <p>23 minutes ago</p>
+            </div>
+            <a href="https://www.reddit.com/r/acturnips/comments/lnublk/sw_tiny_raccoon_children_buying_for_513_bells_each/" target="_blank">
+                <div class="button">
+                    <p>Post Link &#10132;</p>
+                </div>
+            </a>
+            <hr>
+            <h3>[SW] Tiny raccoon children buying for 513 bells each!</h3>
+            <hr>
             <p>u/greasy_pigeon in r/acturnips</p>
-            <p><a
-                    href="https://www.reddit.com/r/acturnips/comments/lnublk/sw_tiny_raccoon_children_buying_for_513_bells_each/">Post
-                    Link</a></p>
+
         </div>
 
-        <div class="post">
-            <h3>513 Bells | 23 minutes ago</h3>
-            <h4>[SW] Tiny raccoon children buying for 513 bells each!</h4>
-            <p>u/greasy_pigeon in r/acturnips</p>
-            <p><a
-                    href="https://www.reddit.com/r/acturnips/comments/lnublk/sw_tiny_raccoon_children_buying_for_513_bells_each/">Post
-                    Link</a></p>
+        <div class="roundBlock">
+            Hi
         </div>
     </div>
+    -->
 
-    <div class="introBlock footer">
-        v2.0
-        <div class="footTag">
-            <a href="https://github.com/RenDelaCruz/turnip-stalker" target="_blank">GitHub</a>
-        </div>
-    </div>
+    <img src="turnip.png" alt="Turnip" width="150px" height="150px" class="center">
+
+    <footer class="roundBlock">
+        <a href="https://github.com/RenDelaCruz/turnip-stalker" target="_blank">GitHub</a>
+    </footer>
+
     <script src="js/script.js"></script>
 </body>
 
 </html>
+
+<!--
+    <h1>&#9662;&#9652;&#9656; Turnip Stalker &#9666;&#9652;&#9662;</h1>
+-->
