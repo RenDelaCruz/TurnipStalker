@@ -95,6 +95,9 @@ footer {
 /* Smartphones (portrait) ----------- */
 @media only screen
 and (max-width: 320px) {
+    input[type=text] {
+        font-size: 100%;
+    }
 }
 
 /* Smartphones (landscape) ----------- */
