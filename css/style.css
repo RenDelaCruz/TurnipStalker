@@ -114,11 +114,11 @@ and (max-width: 320px) {
 @media screen and (orientation:landscape)
 and (min-device-width: 320px) {
     .priceBlock {
-        width: auto;
+        width: 90%;
     }
 
     .post {
-        width: auto;
+        width: 90%;
     }
 }
 
