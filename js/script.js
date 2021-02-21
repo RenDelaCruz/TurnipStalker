@@ -11,9 +11,11 @@ function validateInput() {
     let price = document.getElementById("input-price").value;
     if (isValidInteger(price)) {
         processPosts(parseInt(price));
+        document.getElementById("input-price").blur();
     } else {
         alert("This is not a valid number.");
     }
+    document.getElementById("input-price").value = "";
 }
 
 function isValidInteger(input) {
