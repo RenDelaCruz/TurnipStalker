@@ -10,7 +10,6 @@ html {
 body {
     color: #857A68;
     margin: 1.5rem;
-    /*background-image: url("nhbackground.jpg");*/
 }
 
 input[type=text] {
@@ -49,10 +48,6 @@ a:active {
     color: blue;
 }
 
-footer {
-    flex-shrink: 0;
-}
-
 .center {
     margin: 0 auto;
     text-align: center;
@@ -67,18 +62,23 @@ footer {
     text-align: center;
 }
 
-.post {
-    display: flex;
-    flex-direction: row;
-    flex-flow: wrap;
+.padding-extra {
     padding: 1.5rem;
 }
 
+.tagRow {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+
 .tagBlock {
-    margin-right: 1rem;
     background-color: #FCD631;
     padding: 0.5rem 1.5rem;
-    width: 10rem;
+    flex-shrink: 1;
+
 }
 
 .button {
@@ -103,8 +103,9 @@ and (max-width: 320px) {
 /* Smartphones (landscape) ----------- */
 @media screen and (orientation:landscape)
 and (min-device-width: 320px) {
-    .roundBlock {
-        width: 80%;
+    body {
+        color: #857A68;
+        margin: 1.5rem 4rem;
     }
 }
 
