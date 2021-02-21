@@ -23,44 +23,22 @@
         <h1>Turnip Stalker</h1>
         <p class="margin-extra-x">Filter turnip prices posted on <a href="https://www.reddit.com/r/acturnips/"
                 target="_blank">r/acturnips</a>!</p>
-        <img src="daisy.png" alt="Turnip" width="150px" height="auto" class="margin-extra-y center">
+        <img src="images/daisy.png" alt="Turnip" width="150px" height="auto" class="margin-extra-y center">
         <h3>Enter the minimum price:</h3>
-        <form>
-            <input type="text" id="inputPrice" name="inputPrice" placeholder="Bells"><br>
-            <button type="submit">
-                <h2>Check &#10132;</h2>
-            </button>
-        </form>
+        <input type="text" id="input-price" name="input-price" placeholder="Bells"><br>
+        <button type="button" id="price-button" name="price-button" onclick="validateInput()">
+            <h2>Check &#10132;</h2>
+        </button>
     </div>
 
-    <p class="center">Posts found: 2</p>
-
-    <div>
-        <div class="round-block padding-extra">
-            <div class="tag-container ">
-                <div class="tag yellow">
-                    <strong>513 Bells</strong>
-                </div>
-                <div class="tag blue">
-                    23 minutes ago
-                </div>
-                <a class="tag teal button"
-                    href="https://www.reddit.com/r/acturnips/comments/lnublk/sw_tiny_raccoon_children_buying_for_513_bells_each/"
-                    target="_blank"><span style="color: #E2FDF5;">Visit Post &#10132;</span>
-                </a>
-            </div><br>
-            <h3 class="margin-none text-align-left">[SW] Tiny raccoon children buying for 513 bells each!</h3>
-            <p class="margin-none text-align-left">u/greasy_pigeon in r/acturnips</p>
-        </div>
-    </div>
-
-    <img src="turnip.png" alt="Turnip" width="150px" height="150px" class="center">
+    <p id="post-count" class="center"></p>
+    <div id="post-board"></div>
+    <img src="images/turnip.png" alt="Turnip" width="150px" height="150px" class="center">
 
     <footer class="round-block">
         <a href="https://github.com/RenDelaCruz/turnip-stalker" target="_blank">GitHub</a>
     </footer>
-
-    <script src="js/script.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
 </body>
 
 </html>
