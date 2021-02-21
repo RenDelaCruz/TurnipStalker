@@ -71,12 +71,13 @@ a:active {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: center;
 }
 
 .tagBlock {
     background-color: #FCD631;
     padding: 0.5rem;
-    flex: 1 1 5rem;
+    flex: 1 1 auto;
 }
 
 .button {
@@ -104,10 +105,6 @@ and (min-device-width: 320px) {
     body {
         color: #857A68;
         margin: 1.5rem 4rem;
-    }
-
-    .tagRow {
-        flex-wrap: nowrap;
     }
 }
 
