@@ -67,18 +67,16 @@ a:active {
 }
 
 .tagRow {
-    padding: 0;
-    margin: 0;
     display: flex;
-    flex-flow: row wrap;
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
 }
 
 .tagBlock {
     background-color: #FCD631;
-    padding: 0.5rem 1.5rem;
-    flex-shrink: 1;
-
+    padding: 0.5rem;
+    flex: 1 1 5rem;
 }
 
 .button {
@@ -106,6 +104,10 @@ and (min-device-width: 320px) {
     body {
         color: #857A68;
         margin: 1.5rem 4rem;
+    }
+
+    .tagRow {
+        flex-wrap: nowrap;
     }
 }
 
