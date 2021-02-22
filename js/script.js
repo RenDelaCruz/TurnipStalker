@@ -11,7 +11,14 @@ $(document).ready(function () {
 
 $(document).on("click", "div[id^='post-']", function () {
     var num = this.id.split('-')[1];
-    $('#content-' + num).slideToggle("slow");
+    scrollTo('#post-' + num);
+
+    if ($('#arrow-' + num).text()) {
+        $('#arrow-' + num).text(function () {
+            return $('#arrow-' + num).text() == "▼" ? "▲" : "▼";
+        });
+        $('#content-' + num).slideToggle("slow");
+    }
 });
 
 function validateInput() {
@@ -57,17 +64,26 @@ function identifyPrice(title) {
 
 function makePostBlock(post, idNum) {
     let content = post.content;
-    if (content.includes("https://preview.redd.it")) {
-        let index = content.indexOf("https://preview.redd.it");
+    let imageIndicator = "";
+    if (content.includes(".redd.it") || content.includes("//imgur.com/")) {
+        let index = content.indexOf("https://");
+
         let imgLink = content.substring(index);
-        content = content.substring(0, index);
-        if (content.includes("&#x200B;")) {
-            alert(content);
-            content = "";
+        if (content.includes("//imgur.com/")) {
+            let indexImgur = content.indexOf("imgur.com");
+            imgLink = "http://i." + content.substring(indexImgur) + ".png";
         }
-        content += `<img src="${imgLink}" alt="${post.content}" width="100%" height="auto" class="center"></img>`;
+        content = content.substring(0, index);
+        content += `<br><img src="${imgLink}" alt="${post.content}" width="100%" height="auto" class="center"></img>`;
+        imageIndicator = `<i class="far fa-image"></i>`;
     }
-    
+
+    let arrow = "▼";
+    if (!content) {
+        content = "<small>No Text</small>";
+        arrow = "";
+    }
+
     let block = `
     <div class="round-block padding-extra active-hover" id="post-${idNum}">
         <div class="tag-container ">
@@ -83,7 +99,9 @@ function makePostBlock(post, idNum) {
             </a>
         </div><br>
         <h3 class="margin-none text-align-left">${post.title}</h3>
-        <p class="margin-none text-align-left">${post.user} in ${post.subreddit} &nbsp;|&nbsp; ${post.comments}</p>
+        <p class="margin-none text-align-left">${post.user} in ${post.subreddit} &nbsp;|&nbsp; ${post.comments}
+            <span id="arrow-${idNum}" style="float: right;">${arrow}</span>
+            <span style="float: right; font-size: 1.1rem;">${imageIndicator}</span></p>
         <div id="content-${idNum}" class="panel">
             <hr>
             ${content}
@@ -111,10 +129,10 @@ function combineJson(...urls) {
 function populatePostBoard(postList) {
     let idNum = 1;
 
-    $("#post-board").html("");
+    $("#board").html("");
     for (post of postList) {
         let block = makePostBlock(post, idNum);
-        $(block).hide().appendTo("#post-board").slideDown(2000);
+        $(block).hide().appendTo("#board").slideDown(2000);
         idNum++;
     }
 }
@@ -125,9 +143,9 @@ function alertPostCount(count) {
     alert(postCountAlert);
 }
 
-function scrollToPosts() {
+function scrollTo(id) {
     $("html, body").animate({
-        scrollTop: $("#post-count").offset().top
+        scrollTop: $(id).offset().top
     }, 1000);
 }
 
@@ -150,7 +168,7 @@ function processPosts(minPrice) {
         }
     }
     alertPostCount(validPosts.length);
-    scrollToPosts();
+    scrollTo("#post-count");
     populatePostBoard(validPosts);
 }
 
@@ -181,7 +199,7 @@ function Post(listing, price, timeString) {
     this.link = "https://www.reddit.com" + listing.permalink;
     this.user = listing.author;
     this.comments = formatComments(listing.num_comments);
-    this.content = (listing.selftext)? (listing.selftext) : ("<small>No Text</small>");
+    this.content = (listing.selftext) ? (listing.selftext) : (!listing.selftext && listing.url_overridden_by_dest) ? (listing.url_overridden_by_dest) : "";
     this.timestamp = listing.created_utc;
     this.timeString = getTimeAgo(this.timestamp);
 }

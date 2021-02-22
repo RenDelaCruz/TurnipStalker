@@ -1,9 +1,9 @@
 *, *:before, *:after {
-    font-family: 'Nunito', sans-serif;
     box-sizing: border-box;
 }
 
 html {
+    font-family: 'Nunito', sans-serif;
     background-color: #F4EBC8;
 }
 
@@ -76,12 +76,13 @@ a:hover, a:active {
 }
 
 .active-hover:hover {
-    filter: brightness(95%);
+    filter: brightness(90%);
 }
 
 .panel {
     display: none;
     text-align: left;
+    word-wrap: break-word;
 }
 
 .padding-extra {
@@ -137,6 +138,9 @@ a:hover, a:active {
 @media screen and (orientation:landscape) and (min-device-width: 320px) {
     body {
         margin: 1.5rem 4rem;
+    }
+    input[type=text] {
+        width: 50%;
     }
 }
 
