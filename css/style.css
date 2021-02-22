@@ -247,9 +247,10 @@ a:hover, a:active {
     /* Remove borders */
     outline: none;
     /* Remove outline */
-    background-color: rgb(189, 189, 189);
+    /*background-color: rgb(189, 189, 189);*/
+    background-color: rgba(255, 255, 255, 0.95);
     /* Set a background color */
-    color: white;
+    color: black;
     /* Text color */
     cursor: pointer;
     /* Add a mouse pointer on hover */
@@ -265,5 +266,6 @@ a:hover, a:active {
 
 #top-button:hover {
     background-color: rgb(133, 133, 133);
+    color: white;
     /* Add a dark-grey background on hover */
 }
