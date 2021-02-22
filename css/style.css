@@ -77,7 +77,7 @@ a:hover, a:active {
 }
 
 .active-hover:hover {
-    filter: brightness(90%);
+    filter: brightness(95%);
 }
 
 .panel {
@@ -248,9 +248,9 @@ a:hover, a:active {
     outline: none;
     /* Remove outline */
     /*background-color: rgb(189, 189, 189);*/
-    background-color: rgba(250, 250, 250, 0.2); 
+    background-color: rgba(250, 250, 250, 0.2);
     /* Set a background color */
-    color: black;
+    color: #857A68;
     /* Text color */
     cursor: pointer;
     /* Add a mouse pointer on hover */
@@ -261,12 +261,15 @@ a:hover, a:active {
     font-size: 18px;
     /* Increase font size */
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
 }
 
 #top-button:hover {
-    background-color: rgb(133, 133, 133);
+    background-color: rgba(131, 131, 131, 0.2);
     color: white;
     /* Add a dark-grey background on hover */
+}
+
+.blurry {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
 }
