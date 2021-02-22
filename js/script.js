@@ -9,7 +9,7 @@ $(document).ready(function () {
     });
 });
 
-$(document).on("click", "#myBtn", function () {
+$(document).on("click", "#top-button", function () {
     scrollTo("#top");
 });
 
@@ -58,8 +58,10 @@ function identifyPrice(title) {
         }
     }
 
-    if (possibleNums.length === 1) {
+    if (possibleNums.length === 1 && possibleNums[0] >= 90) {
         return possibleNums[0];
+    } else if (possibleNums.length === 3 && possibleNums.every(function (e) { return e < 10 })) {
+        return parseInt(possibleNums.join(""));
     } else if (possibleNums.length !== 0) {
         return Math.max(...possibleNums);
     }
@@ -102,12 +104,12 @@ function makePostBlock(post, idNum) {
                 target="_blank"><span style="color: #E2FDF5;">Visit Post &#10132;</span>
             </a>
         </div><br>
-        <h3 class="margin-none text-align-left">${post.title}</h3>
-        <p class="margin-none text-align-left">${post.user} in ${post.subreddit}</p>
-        <p class="margin-none text-align-left"><span style="font-size: small;">${post.comments}</span>
+        <h3 class="margin-none wrap-break">${post.title}</h3>
+        <p class="margin-none wrap-break">${post.user} in ${post.subreddit}</p>
+        <p class="margin-none wrap-break"><span style="font-size: small;">${post.comments}</span>
             <span id="arrow-${idNum}" style="float: right;">${arrow}</span>
             <span style="float: right; font-size: 1.1rem;">${imageIndicator}</span></p>
-        <div id="content-${idNum}" class="panel">
+        <div id="content-${idNum}" class="panel wrap-break">
             <hr>
             ${content}
         </div>
@@ -257,7 +259,7 @@ function getTimeAgo(ts) {
 }
 
 //Get the button:
-mybutton = document.getElementById("myBtn");
+mybutton = document.getElementById("top-button");
 
 // When the user scrolls down 20px from the top of the document, show the button
 window.onscroll = function () { scrollFunction() };

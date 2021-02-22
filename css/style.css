@@ -63,8 +63,9 @@ a:hover, a:active {
     margin: 0;
 }
 
-.text-align-left {
+.wrap-break {
     text-align: left;
+    word-wrap: break-word;
 }
 
 .round-block {
@@ -81,8 +82,6 @@ a:hover, a:active {
 
 .panel {
     display: none;
-    text-align: left;
-    word-wrap: break-word;
 }
 
 .padding-extra {
@@ -233,7 +232,7 @@ a:hover, a:active {
     transform: rotate(45deg);
 }
 
-#myBtn {
+#top-button {
     display: none;
     /* Hidden by default */
     position: fixed;
@@ -248,7 +247,7 @@ a:hover, a:active {
     /* Remove borders */
     outline: none;
     /* Remove outline */
-    background-color: grey;
+    background-color: rgb(189, 189, 189);
     /* Set a background color */
     color: white;
     /* Text color */
@@ -260,9 +259,11 @@ a:hover, a:active {
     /* Rounded corners */
     font-size: 18px;
     /* Increase font size */
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
 }
 
-#myBtn:hover {
-    background-color: #555;
+#top-button:hover {
+    background-color: rgb(133, 133, 133);
     /* Add a dark-grey background on hover */
 }
