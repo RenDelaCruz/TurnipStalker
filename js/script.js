@@ -103,7 +103,8 @@ function makePostBlock(post, idNum) {
             </a>
         </div><br>
         <h3 class="margin-none text-align-left">${post.title}</h3>
-        <p class="margin-none text-align-left">${post.user} in ${post.subreddit} &nbsp;|&nbsp; ${post.comments}
+        <p class="margin-none text-align-left">${post.user} in ${post.subreddit}</p>
+        <p class="margin-none text-align-left"><span style="font-size: small;">${post.comments}</span>
             <span id="arrow-${idNum}" style="float: right;">${arrow}</span>
             <span style="float: right; font-size: 1.1rem;">${imageIndicator}</span></p>
         <div id="content-${idNum}" class="panel">
