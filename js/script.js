@@ -1,10 +1,17 @@
-const URL = "https://www.reddit.com/r/acturnips/new/.json";
+const URL_AC = "https://www.reddit.com/r/acturnips/new/.json";
+const URL_EX = "https://www.reddit.com/r/TurnipExchange/new/.json"
+const URL_NH = "https://www.reddit.com/r/ACNHTurnips/new/.json";
 
 $(document).ready(function () {
     $("#input-price").keypress(function (e) {
         if (e.keyCode == 13)
             $("#price-button").click();
     });
+});
+
+$(document).on("click", "div[id^='post-']", function () {
+    var num = this.id.split('-')[1];
+    $('#content-' + num).slideToggle("slow");
 });
 
 function validateInput() {
@@ -48,63 +55,155 @@ function identifyPrice(title) {
     return -1;
 }
 
-function makePostBlock(title, price, subreddit, link, user, time) {
+function makePostBlock(post, idNum) {
+    let content = post.content;
+    if (content.includes("https://preview.redd.it")) {
+        let index = content.indexOf("https://preview.redd.it");
+        let imgLink = content.substring(index);
+        content = content.substring(0, index);
+        if (content.includes("&#x200B;")) {
+            alert(content);
+            content = "";
+        }
+        content += `<img src="${imgLink}" alt="${post.content}" width="100%" height="auto" class="center"></img>`;
+    }
+    
     let block = `
-    <div class="round-block padding-extra">
+    <div class="round-block padding-extra active-hover" id="post-${idNum}">
         <div class="tag-container ">
             <div class="tag yellow">
-                <strong>${price} Bells</strong>
+                <strong>${post.price} Bells</strong>
             </div>
             <div class="tag blue">
-                ${time}
+                ${post.timeString}
             </div>
             <a class="tag teal button"
-                href="${link}"
+                href="${post.link}"
                 target="_blank"><span style="color: #E2FDF5;">Visit Post &#10132;</span>
             </a>
         </div><br>
-        <h3 class="margin-none text-align-left">${title}</h3>
-        <p class="margin-none text-align-left">${user} in ${subreddit}</p>
+        <h3 class="margin-none text-align-left">${post.title}</h3>
+        <p class="margin-none text-align-left">${post.user} in ${post.subreddit} &nbsp;|&nbsp; ${post.comments}</p>
+        <div id="content-${idNum}" class="panel">
+            <hr>
+            ${content}
+        </div>
     </div>
     `;
     return block;
 }
 
-function processPosts(minPrice) {
-    let info = getJson(URL);
-    let validPostCount = 0;
+function isCheckboxActive() {
+    let checkbox = document.getElementById("recent-check");
+    return checkbox.checked;
+}
+
+function combineJson(...urls) {
+    let combinedInfo = [];
+
+    for (let url of urls) {
+        let info = getJson(url);
+        combinedInfo.push(...info.data.children);
+    }
+    return combinedInfo;
+}
+
+function populatePostBoard(postList) {
+    let idNum = 1;
 
     $("#post-board").html("");
-    for (let listing of info.data.children) {
-        let post = listing.data;
-
-        let title = post.title;
-        let price = identifyPrice(title);
-
-        if (price > minPrice) {
-            validPostCount++;
-            let subreddit = post.subreddit_name_prefixed;
-            let link = "https://www.reddit.com" + post.permalink;
-            let user = post.author;
-            let time = getTimeAgo(post.created_utc);
-
-            let block = makePostBlock(title, price, subreddit, link, user, time);
-            $("#post-board").append(block);
-        }
+    for (post of postList) {
+        let block = makePostBlock(post, idNum);
+        $(block).hide().appendTo("#post-board").slideDown(2000);
+        idNum++;
     }
-    let postCountAlert = "Posts found: " + validPostCount;
+}
+
+function alertPostCount(count) {
+    let postCountAlert = "Posts found: " + count;
     document.getElementById("post-count").innerHTML = postCountAlert;
     alert(postCountAlert);
 }
 
+function scrollToPosts() {
+    $("html, body").animate({
+        scrollTop: $("#post-count").offset().top
+    }, 1000);
+}
+
+function processPosts(minPrice) {
+    let info = combineJson(URL_AC, URL_EX, URL_NH);
+    let validPosts = [];
+
+    for (let record of info) {
+        let listing = record.data;
+
+        let price = identifyPrice(listing.title);
+        if (price > minPrice) {
+            if ((isCheckboxActive() && isHoursLessThan(listing.created_utc, 3)) || !isCheckboxActive()) {
+                let post = new Post(listing, price);
+                validPosts.push(post)
+                validPosts.sort(function (a, b) {
+                    return b.timestamp - a.timestamp;
+                });
+            }
+        }
+    }
+    alertPostCount(validPosts.length);
+    scrollToPosts();
+    populatePostBoard(validPosts);
+}
+
+function getJson(url) {
+    var result;
+    $.ajax({
+        url: url,
+        dataType: "json",
+        async: false,
+        success: function (data) {
+            result = data;
+        }
+    });
+    return result;
+}
+
+function formatComments(numComments) {
+    if (numComments == 1) {
+        return "1 comment";
+    }
+    return numComments + " comments";
+}
+
+function Post(listing, price, timeString) {
+    this.title = listing.title;
+    this.price = price;
+    this.subreddit = listing.subreddit_name_prefixed;
+    this.link = "https://www.reddit.com" + listing.permalink;
+    this.user = listing.author;
+    this.comments = formatComments(listing.num_comments);
+    this.content = (listing.selftext)? (listing.selftext) : ("<small>No Text</small>");
+    this.timestamp = listing.created_utc;
+    this.timeString = getTimeAgo(this.timestamp);
+}
+
+function getSecondsFromTimestamp(ts) {
+    let current = new Date();
+    let nowTs = Math.floor(current.getTime() / 1000);
+    return nowTs - ts;
+}
+
+function isHoursLessThan(timestamp, hourLimit) {
+    let seconds = getSecondsFromTimestamp(timestamp);
+    let hours = seconds / 3600;
+    return hours < hourLimit;
+}
+
 function getTimeAgo(ts) {
-    let currentDate = new Date();
-    let nowTs = Math.floor(currentDate.getTime() / 1000);
-    let seconds = nowTs - ts;
+    let seconds = getSecondsFromTimestamp(ts);
 
     let timeValue = 0;
     // Days ago
-    if (seconds > 24 * 3600) {
+    if (seconds >= 24 * 3600) {
         timeValue = Math.floor(seconds / (24 * 3600));
         if (timeValue == 1) {
             return "1 day ago";
@@ -112,7 +211,7 @@ function getTimeAgo(ts) {
         return timeValue + " days ago";
     }
     // Hours ago
-    if (seconds > 3600) {
+    if (seconds >= 3600) {
         timeValue = Math.floor(seconds / 3600);
         if (timeValue == 1) {
             return "1 hour ago";
@@ -120,7 +219,7 @@ function getTimeAgo(ts) {
         return timeValue + " hours ago";
     }
     // Minutes ago
-    if (seconds > 60) {
+    if (seconds >= 60) {
         timeValue = Math.floor(seconds / 60);
         if (timeValue == 1) {
             return "1 minute ago";
@@ -134,15 +233,3 @@ function getTimeAgo(ts) {
     return seconds + " seconds ago";
 }
 
-function getJson(url) {
-    var result;
-    $.ajax({
-        url: url,
-        dataType: 'json',
-        async: false,
-        success: function (data) {
-            result = data;
-        }
-    });
-    return result;
-}
