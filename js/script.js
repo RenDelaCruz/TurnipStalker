@@ -13,6 +13,7 @@ $("#top-button").click(function () {
     scrollTo("#top");
 });
 
+// Toggle slide for each post
 $(document).on("click", "div[id^='post-']", function () {
     var num = this.id.split('-')[1];
     scrollTo('#post-' + num);
@@ -25,27 +26,28 @@ $(document).on("click", "div[id^='post-']", function () {
     }
 });
 
+// Checks if valid input
 function validateInput() {
-    let price = document.getElementById("input-price").value;
-    if (isValidInteger(price)) {
+    let price = $("#input-price").val();
+    if (isPositiveInteger(price)) {
+        // Main processing function to output posts
         processPosts(parseInt(price));
-        document.getElementById("input-price").blur();
+        $("#input-price").blur();
     } else {
-        alert("This is not a valid number.");
+        alert("This is not a valid price.");
     }
-    document.getElementById("input-price").value = "";
+    $("#input-price").val("");
 }
 
-function isValidInteger(input) {
-    if (!isNaN(input) && Number.isInteger(parseFloat(input)) && input > 0) {
-        return true;
-    }
-    return false;
+function isPositiveInteger(input) {
+    return Number.isInteger(parseFloat(input)) && input >= 0;
 }
 
+// Removes punctuation and returns split string
 function getTokens(text) {
-    let noPunct = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()\[\]]/g, " ").replace("hundred", " ").replace(/\s{2,}/g, " ");
-    return noPunct.split(" ");
+    // Word 'hundred' is removed for easier price inference
+    let noPunct = text.replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()\[\]]/g, " ").replace("hundred", " ");
+    return noPunct.replace(/\s{2,}/g, " ").split(" ");
 }
 
 function identifyPrice(title) {
@@ -53,7 +55,7 @@ function identifyPrice(title) {
     let possibleNums = [];
 
     for (let token of tokens) {
-        if (isValidInteger(token)) {
+        if (isPositiveInteger(token)) {
             possibleNums.push(parseInt(token));
         }
     }
@@ -91,6 +93,10 @@ function inferSpelledOutPrice(tokens) {
         }
     }
 
+    if (possibleDigits.length > currentMax.length) {
+        currentMax = possibleDigits;
+    }
+
     if ((currentMax.length === 3 || currentMax.length === 2) && currentMax.every(function (e) { return e < 10 })) {
         return parseInt(currentMax.join(""));
     }
@@ -98,7 +104,7 @@ function inferSpelledOutPrice(tokens) {
 }
 
 function convertWrittenToNumber(token) {
-    if (isValidInteger(token)) {
+    if (isPositiveInteger(token)) {
         return parseInt(token);
     }
 
@@ -125,10 +131,16 @@ function convertWrittenToNumber(token) {
     return num;
 }
 
+const SC_OFF = "&lt;!-- SC_OFF --&gt;";
+const SC_ON = "&lt;!-- SC_ON --&gt;";
+
 function makePostBlock(post, idNum) {
     let content = post.content;
     let imageIndicator = "";
-    if (content.includes(".redd.it") || content.includes("//imgur.com/")) {
+
+    if (content.includes("reddit.com/gallery/")) {
+        imageIndicator = `<i class="far fa-image"></i>`;
+    } else if (content.includes(".redd.it") || content.includes("//imgur.com/")) {
         let index = content.indexOf("https://");
 
         let imgLink = content.substring(index);
@@ -136,8 +148,8 @@ function makePostBlock(post, idNum) {
             let indexImgur = content.indexOf("imgur.com");
             imgLink = "http://i." + content.substring(indexImgur) + ".png";
         }
-        content = content.substring(0, index);
-        content += `<br><img src="${imgLink}" alt="${post.content}" width="100%" height="auto" class="center"></img>`;
+        //content = content.substring(0, index);
+        content = `<br><img src="${imgLink}" alt="${post.content}" width="100%" height="auto" class="center"></img>`;
         imageIndicator = `<i class="far fa-image"></i>`;
     }
 
@@ -145,6 +157,21 @@ function makePostBlock(post, idNum) {
     if (!content) {
         content = "<small>No Text</small>";
         arrow = "";
+    }
+
+    if (!imageIndicator) {
+        content = "";
+    }
+
+    let htmlContent = post.htmlContent;
+    if (htmlContent) {
+        let offIndex = htmlContent.indexOf(SC_OFF) + SC_OFF.length;
+        let onIndex = htmlContent.indexOf(SC_ON);
+
+        htmlContent = htmlContent.substring(offIndex, onIndex);
+        htmlContent = htmlDecode(htmlContent);
+    } else {
+        htmlContent = "";
     }
 
     let block = `
@@ -168,6 +195,7 @@ function makePostBlock(post, idNum) {
             <span style="float: right; font-size: 1.1rem;">${imageIndicator}</span></p>
         <div id="content-${idNum}" class="panel wrap-break">
             <hr>
+            ${htmlContent}
             ${content}
         </div>
     </div>
@@ -176,8 +204,7 @@ function makePostBlock(post, idNum) {
 }
 
 function isCheckboxActive() {
-    let checkbox = document.getElementById("recent-check");
-    return checkbox.checked;
+    return $("#recent-check").is(":checked");
 }
 
 function combineJson(...urls) {
@@ -196,14 +223,26 @@ function populatePostBoard(postList) {
     $("#board").html("");
     for (post of postList) {
         let block = makePostBlock(post, idNum);
-        $(block).hide().appendTo("#board").slideDown(2000);
+        $(block).hide().appendTo("#board")
+            .css('opacity', 0)
+            .slideDown(2000)
+            .animate(
+                { opacity: 1 },
+                { queue: false, duration: 1300 }
+            );
         idNum++;
     }
 }
 
+function htmlDecode(input) {
+    var e = document.createElement('div');
+    e.innerHTML = input;
+    return e.childNodes[0].nodeValue;
+}
+
 function alertPostCount(count) {
     let postCountAlert = "Posts found: " + count;
-    document.getElementById("post-count").innerHTML = postCountAlert;
+    $("#post-count").html(postCountAlert);
     alert(postCountAlert);
 }
 
@@ -221,7 +260,7 @@ function processPosts(minPrice) {
         let listing = record.data;
 
         let price = identifyPrice(listing.title);
-        if (price > minPrice) {
+        if (price >= minPrice) {
             if ((isCheckboxActive() && isHoursLessThan(listing.created_utc, 3)) || !isCheckboxActive()) {
                 let post = new Post(listing, price);
                 validPosts.push(post)
@@ -229,6 +268,8 @@ function processPosts(minPrice) {
                     return b.timestamp - a.timestamp;
                 });
             }
+        } else if (price === -1) {
+            console.log(`Unable to find price for: \n\t${listing.title}\n\t${"https://www.reddit.com" + listing.permalink}`);
         }
     }
     alertPostCount(validPosts.length);
@@ -237,7 +278,7 @@ function processPosts(minPrice) {
 }
 
 function getJson(url) {
-    var result;
+    let result;
     $.ajax({
         url: url,
         dataType: "json",
@@ -260,9 +301,10 @@ function Post(listing, price, timeString) {
     this.link = "https://www.reddit.com" + listing.permalink;
     this.user = listing.author;
     this.comments = formatComments(listing.num_comments);
-    this.content = (listing.selftext) ? (listing.selftext) : (!listing.selftext && listing.url_overridden_by_dest) ? (listing.url_overridden_by_dest) : "";
+    this.content = (listing.selftext) ? (listing.selftext) : (listing.url_overridden_by_dest) ? (listing.url_overridden_by_dest) : "";
     this.timestamp = listing.created_utc;
     this.timeString = getTimeAgo(this.timestamp);
+    this.htmlContent = listing.selftext_html;
 }
 
 function getSecondsFromTimestamp(ts) {
