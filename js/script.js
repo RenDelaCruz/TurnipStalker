@@ -2,11 +2,13 @@ const URL_AC = "https://www.reddit.com/r/acturnips/new/.json";
 const URL_EX = "https://www.reddit.com/r/TurnipExchange/new/.json"
 const URL_NH = "https://www.reddit.com/r/ACNHTurnips/new/.json";
 
+// Pressing enter on input box simulates a click
 $("#input-price").keypress(function (e) {
     if (e.keyCode == 13)
         $("#price-button").click();
 });
 
+// Scroll to top if #top-button clicked
 $("#top-button").click(function () {
     scrollTo("#top");
 });
