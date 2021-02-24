@@ -2,14 +2,12 @@ const URL_AC = "https://www.reddit.com/r/acturnips/new/.json";
 const URL_EX = "https://www.reddit.com/r/TurnipExchange/new/.json"
 const URL_NH = "https://www.reddit.com/r/ACNHTurnips/new/.json";
 
-$(document).ready(function () {
-    $("#input-price").keypress(function (e) {
-        if (e.keyCode == 13)
-            $("#price-button").click();
-    });
+$("#input-price").keypress(function (e) {
+    if (e.keyCode == 13)
+        $("#price-button").click();
 });
 
-$(document).on("click", "#top-button", function () {
+$("#top-button").click(function () {
     scrollTo("#top");
 });
 
@@ -44,7 +42,7 @@ function isValidInteger(input) {
 }
 
 function getTokens(text) {
-    let noPunct = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s{2,}/g, " ");
+    let noPunct = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()\[\]]/g, " ").replace("hundred", " ").replace(/\s{2,}/g, " ");
     return noPunct.split(" ");
 }
 
@@ -63,9 +61,66 @@ function identifyPrice(title) {
     } else if (possibleNums.length === 3 && possibleNums.every(function (e) { return e < 10 })) {
         return parseInt(possibleNums.join(""));
     } else if (possibleNums.length !== 0) {
-        return Math.max(...possibleNums);
+        let max = Math.max(...possibleNums);
+        if (max >= 90) {
+            return max;
+        }
+    }
+    return inferSpelledOutPrice(tokens);
+}
+
+function inferSpelledOutPrice(tokens) {
+    let possibleDigits = [];
+    let prevPushedIndex = -1;
+    let currentMax = [];
+
+    let num;
+    for (let i = 0; i < tokens.length; i++) {
+        num = convertWrittenToNumber(tokens[i]);
+        if (num !== -1 && (possibleDigits.length === 0 || prevPushedIndex + 1 === i)) {
+            possibleDigits.push(num);
+            prevPushedIndex = i;
+        } else {
+            if (possibleDigits.length > currentMax.length) {
+                currentMax = possibleDigits;
+            }
+            possibleDigits = [];
+            prevPushedIndex = -1;
+        }
+    }
+
+    if ((currentMax.length === 3 || currentMax.length === 2) && currentMax.every(function (e) { return e < 10 })) {
+        return parseInt(currentMax.join(""));
     }
     return -1;
+}
+
+function convertWrittenToNumber(token) {
+    if (isValidInteger(token)) {
+        return parseInt(token);
+    }
+
+    let num = -1;
+    if (token == "one") {
+        num = 1;
+    } else if (token == "two" || token == "twenty") {
+        num = 2;
+    } else if (token == "three" || token == "thirty") {
+        num = 3;
+    } else if (token.includes("four")) {
+        num = 4;
+    } else if (token == "five" || token == "fifty") {
+        num = 5;
+    } else if (token.includes("six")) {
+        num = 6;
+    } else if (token.includes("seven")) {
+        num = 7;
+    } else if (token.includes("eight")) {
+        num = 8;
+    } else if (token.includes("nine")) {
+        num = 9;
+    }
+    return num;
 }
 
 function makePostBlock(post, idNum) {
@@ -193,10 +248,7 @@ function getJson(url) {
 }
 
 function formatComments(numComments) {
-    if (numComments == 1) {
-        return "1 comment";
-    }
-    return numComments + " comments";
+    return numComments + (numComments === 1 ? " comment" : " comments");
 }
 
 function Post(listing, price, timeString) {
@@ -230,32 +282,20 @@ function getTimeAgo(ts) {
     // Days ago
     if (seconds >= 24 * 3600) {
         timeValue = Math.floor(seconds / (24 * 3600));
-        if (timeValue == 1) {
-            return "1 day ago";
-        }
-        return timeValue + " days ago";
+        return timeValue + (timeValue === 1 ? " day" : " days") + " ago";
     }
     // Hours ago
     if (seconds >= 3600) {
         timeValue = Math.floor(seconds / 3600);
-        if (timeValue == 1) {
-            return "1 hour ago";
-        }
-        return timeValue + " hours ago";
+        return timeValue + (timeValue === 1 ? " hour" : " hours") + " ago";
     }
     // Minutes ago
     if (seconds >= 60) {
         timeValue = Math.floor(seconds / 60);
-        if (timeValue == 1) {
-            return "1 minute ago";
-        }
-        return timeValue + " minutes ago";
+        return timeValue + (timeValue === 1 ? " minute" : " minutes") + " ago";
     }
     // Seconds ago
-    if (seconds == 1) {
-        return "1 second ago";
-    }
-    return seconds + " seconds ago";
+    return seconds + (seconds === 1 ? " second" : " seconds") + " ago";
 }
 
 //Get the button:
@@ -271,10 +311,3 @@ function scrollFunction() {
         mybutton.style.display = "none";
     }
 }
-
-/*
-// When the user clicks on the button, scroll to the top of the document
-function topFunction() {
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-}*/
