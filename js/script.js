@@ -137,10 +137,7 @@ const SC_ON = "&lt;!-- SC_ON --&gt;";
 function makePostBlock(post, idNum) {
     let content = post.content;
     let imageIndicator = "";
-
-    if (content.includes("reddit.com/gallery/")) {
-        imageIndicator = `<i class="far fa-image"></i>`;
-    } else if (content.includes(".redd.it") || content.includes("//imgur.com/")) {
+    if (content.includes(".redd.it") || content.includes("//imgur.com/")) {
         let index = content.indexOf("https://");
 
         let imgLink = content.substring(index);
@@ -148,19 +145,8 @@ function makePostBlock(post, idNum) {
             let indexImgur = content.indexOf("imgur.com");
             imgLink = "http://i." + content.substring(indexImgur) + ".png";
         }
-        //content = content.substring(0, index);
         content = `<br><img src="${imgLink}" alt="${post.content}" width="100%" height="auto" class="center"></img>`;
         imageIndicator = `<i class="far fa-image"></i>`;
-    }
-
-    let arrow = "▼";
-    if (!content) {
-        content = "<small>No Text</small>";
-        arrow = "";
-    }
-
-    if (!imageIndicator) {
-        content = "";
     }
 
     let htmlContent = post.htmlContent;
@@ -172,6 +158,15 @@ function makePostBlock(post, idNum) {
         htmlContent = htmlDecode(htmlContent);
     } else {
         htmlContent = "";
+    }
+
+    let arrow = "▼";
+    if (!content) {
+        arrow = "";
+    }
+
+    if (!imageIndicator && htmlContent) {
+        content = "";
     }
 
     let block = `
