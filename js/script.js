@@ -345,8 +345,10 @@ window.onscroll = function () { scrollFunction() };
 
 function scrollFunction() {
     if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-        mybutton.style.display = "block";
+        //mybutton.style.display = "block";
+        $("#top-button").fadeIn(2000);
     } else {
-        mybutton.style.display = "none";
+        $("#top-button").fadeOut(1000);
+        //mybutton.style.display = "none";
     }
 }
