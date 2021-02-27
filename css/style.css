@@ -4,10 +4,11 @@
 
 html {
     background: url("../timtom.jpg") no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+    -webkit-background-size: 100% auto;
+    -moz-background-size: 100% auto;
+    -o-background-size: 100% auto;
+    background-size: 100% auto;
+    background-position: center bottom;
     
     font-family: 'Nunito', sans-serif;
     /*background-color: #F4EBC8;*/
@@ -148,7 +149,7 @@ a:hover, a:active {
 }
 
 /* Smartphones (landscape) ----------- */
-
+/*
 @media screen and (orientation:landscape) and (min-device-width: 320px) {
     body {
         margin: 1.5rem 4rem;
@@ -156,7 +157,7 @@ a:hover, a:active {
     input[type=text] {
         width: 50%;
     }
-}
+}*/
 
 /* Desktops and laptops ----------- */
 
