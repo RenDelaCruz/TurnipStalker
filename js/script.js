@@ -26,6 +26,15 @@ $(document).on("click", "div[id^='post-']", function () {
     }
 });
 
+// Toggle fade for #top-button when scrolling down
+$(window).scroll(function() {
+    if ($("html, body").scrollTop() > 300) {
+        $("#top-button").fadeIn(2000);
+    } else {
+        $("#top-button").fadeOut(1000);
+    }
+});
+
 // Checks if valid input
 function validateInput() {
     let price = $("#input-price").val();
@@ -108,6 +117,8 @@ function convertWrittenToNumber(token) {
         return parseInt(token);
     }
 
+    token = token.toLowerCase();
+
     let num = -1;
     if (token == "one") {
         num = 1;
@@ -145,7 +156,7 @@ function makePostBlock(post, idNum) {
             let indexImgur = content.indexOf("imgur.com");
             imgLink = "http://i." + content.substring(indexImgur) + ".png";
         }
-        content = `<br><img src="${imgLink}" alt="${post.content}" width="100%" height="auto" class="center"></img>`;
+        content = `<br><img src="${imgLink}" alt="${post.title}" width="100%" height="auto" class="center"></img>`;
         imageIndicator = `<i class="far fa-image"></i>`;
     }
 
@@ -155,7 +166,7 @@ function makePostBlock(post, idNum) {
         let onIndex = htmlContent.indexOf(SC_ON);
 
         htmlContent = htmlContent.substring(offIndex, onIndex);
-        htmlContent = htmlDecode(htmlContent);
+        htmlContent = decodeHtml(htmlContent);
     } else {
         htmlContent = "";
     }
@@ -229,7 +240,7 @@ function populatePostBoard(postList) {
     }
 }
 
-function htmlDecode(input) {
+function decodeHtml(input) {
     var e = document.createElement('div');
     e.innerHTML = input;
     return e.childNodes[0].nodeValue;
@@ -256,7 +267,7 @@ function processPosts(minPrice) {
 
         let price = identifyPrice(listing.title);
         if (price >= minPrice) {
-            if ((isCheckboxActive() && isHoursLessThan(listing.created_utc, 3)) || !isCheckboxActive()) {
+            if ((isCheckboxActive() && isHoursLessThan(listing.created_utc, 2)) || !isCheckboxActive()) {
                 let post = new Post(listing, price);
                 validPosts.push(post)
                 validPosts.sort(function (a, b) {
@@ -272,6 +283,7 @@ function processPosts(minPrice) {
     populatePostBoard(validPosts);
 }
 
+// Asynchronously retrieve JSON from URL
 function getJson(url) {
     let result;
     $.ajax({
@@ -289,7 +301,7 @@ function formatComments(numComments) {
     return numComments + (numComments === 1 ? " comment" : " comments");
 }
 
-function Post(listing, price, timeString) {
+function Post(listing, price) {
     this.title = listing.title;
     this.price = price;
     this.subreddit = listing.subreddit_name_prefixed;
@@ -317,7 +329,7 @@ function isHoursLessThan(timestamp, hourLimit) {
 function getTimeAgo(ts) {
     let seconds = getSecondsFromTimestamp(ts);
 
-    let timeValue = 0;
+    let timeValue;
     // Days ago
     if (seconds >= 24 * 3600) {
         timeValue = Math.floor(seconds / (24 * 3600));
@@ -335,20 +347,4 @@ function getTimeAgo(ts) {
     }
     // Seconds ago
     return seconds + (seconds === 1 ? " second" : " seconds") + " ago";
-}
-
-//Get the button:
-mybutton = document.getElementById("top-button");
-
-// When the user scrolls down 20px from the top of the document, show the button
-window.onscroll = function () { scrollFunction() };
-
-function scrollFunction() {
-    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-        //mybutton.style.display = "block";
-        $("#top-button").fadeIn(2000);
-    } else {
-        $("#top-button").fadeOut(1000);
-        //mybutton.style.display = "none";
-    }
 }
