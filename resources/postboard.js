@@ -1,39 +1,14 @@
+/*
+ * File: postboard.js
+ * Author: Ren Dela Cruz
+ * Date: 2021
+ * Handles functions related to updating the post board
+ */
+
+
 const URL_AC = "https://www.reddit.com/r/acturnips/new/.json";
-const URL_EX = "https://www.reddit.com/r/TurnipExchange/new/.json"
+const URL_EX = "https://www.reddit.com/r/TurnipExchange/new/.json";
 const URL_NH = "https://www.reddit.com/r/ACNHTurnips/new/.json";
-
-// Pressing enter on input box simulates a click
-$("#input-price").keypress(function (e) {
-    if (e.keyCode == 13)
-        $("#price-button").click();
-});
-
-// Scroll to top if #top-button clicked
-$("#top-button").click(function () {
-    scrollTo("#top");
-});
-
-// Toggle slide for each post
-$(document).on("click", "div[id^='post-']", function () {
-    var num = this.id.split('-')[1];
-    scrollTo('#post-' + num);
-
-    if ($('#arrow-' + num).text()) {
-        $('#arrow-' + num).text(function () {
-            return $('#arrow-' + num).text() == "▼" ? "▲" : "▼";
-        });
-        $('#content-' + num).slideToggle("slow");
-    }
-});
-
-// Toggle fade for #top-button when scrolling down
-$(window).scroll(function() {
-    if ($("html, body").scrollTop() > 300) {
-        $("#top-button").fadeIn(2000);
-    } else {
-        $("#top-button").fadeOut(1000);
-    }
-});
 
 // Checks if valid input
 function validateInput() {
@@ -46,10 +21,6 @@ function validateInput() {
         alert("This is not a valid price.");
     }
     $("#input-price").val("");
-}
-
-function isPositiveInteger(input) {
-    return Number.isInteger(parseFloat(input)) && input >= 0;
 }
 
 // Removes punctuation and returns split string
@@ -74,15 +45,26 @@ function identifyPrice(title) {
     } else if (possibleNums.length === 3 && possibleNums.every(function (e) { return e < 10 })) {
         return parseInt(possibleNums.join(""));
     } else if (possibleNums.length !== 0) {
-        let max = Math.max(...possibleNums);
-        if (max >= 90) {
-            return max;
+        let currMax = -1;
+
+        for (i = 0; i < possibleNums.length; i++) {
+            if (validPriceRange(possibleNums[i]) && possibleNums[i] > currMax) {
+                currMax = possibleNums[i];
+            }
+        }
+
+        if (currMax !== -1) {
+            return currMax;
         }
     }
-    return inferSpelledOutPrice(tokens);
+    return inferSpelledOutPrice(tokens, true);
 }
 
-function inferSpelledOutPrice(tokens) {
+function validPriceRange(price) {
+    return price >= 90 && price <= 660;
+}
+
+function inferSpelledOutPrice(tokens, firstPass) {
     let possibleDigits = [];
     let prevPushedIndex = -1;
     let currentMax = [];
@@ -94,7 +76,7 @@ function inferSpelledOutPrice(tokens) {
             possibleDigits.push(num);
             prevPushedIndex = i;
         } else {
-            if (possibleDigits.length > currentMax.length) {
+            if (possibleDigits.length > currentMax.length && validPriceRange(parseInt(possibleDigits.join("")))) {
                 currentMax = possibleDigits;
             }
             possibleDigits = [];
@@ -102,12 +84,17 @@ function inferSpelledOutPrice(tokens) {
         }
     }
 
-    if (possibleDigits.length > currentMax.length) {
+    if (possibleDigits.length > currentMax.length && validPriceRange(parseInt(possibleDigits.join("")))) {
         currentMax = possibleDigits;
     }
 
     if ((currentMax.length === 3 || currentMax.length === 2) && currentMax.every(function (e) { return e < 10 })) {
         return parseInt(currentMax.join(""));
+    }
+
+    if (firstPass) {
+        tokens = tokens.join("").split("");
+        return inferSpelledOutPrice(tokens, false)
     }
     return -1;
 }
@@ -120,7 +107,9 @@ function convertWrittenToNumber(token) {
     token = token.toLowerCase();
 
     let num = -1;
-    if (token == "one") {
+    if (token == "zero") {
+        num = 0;
+    } else if (token == "one") {
         num = 1;
     } else if (token == "two" || token == "twenty") {
         num = 2;
@@ -209,20 +198,6 @@ function makePostBlock(post, idNum) {
     return block;
 }
 
-function isCheckboxActive() {
-    return $("#recent-check").is(":checked");
-}
-
-function combineJson(...urls) {
-    let combinedInfo = [];
-
-    for (let url of urls) {
-        let info = getJson(url);
-        combinedInfo.push(...info.data.children);
-    }
-    return combinedInfo;
-}
-
 function populatePostBoard(postList) {
     let idNum = 1;
 
@@ -240,24 +215,6 @@ function populatePostBoard(postList) {
     }
 }
 
-function decodeHtml(input) {
-    var e = document.createElement('div');
-    e.innerHTML = input;
-    return e.childNodes[0].nodeValue;
-}
-
-function alertPostCount(count) {
-    let postCountAlert = "Posts found: " + count;
-    $("#post-count").html(postCountAlert);
-    alert(postCountAlert);
-}
-
-function scrollTo(id) {
-    $("html, body").animate({
-        scrollTop: $(id).offset().top
-    }, 1000);
-}
-
 function processPosts(minPrice) {
     let info = combineJson(URL_AC, URL_EX, URL_NH);
     let validPosts = [];
@@ -266,7 +223,7 @@ function processPosts(minPrice) {
         let listing = record.data;
 
         let price = identifyPrice(listing.title);
-        if (price >= minPrice) {
+        if (price >= minPrice && price >= 90) {
             if ((isCheckboxActive() && isHoursLessThan(listing.created_utc, 2)) || !isCheckboxActive()) {
                 let post = new Post(listing, price);
                 validPosts.push(post)
@@ -276,25 +233,13 @@ function processPosts(minPrice) {
             }
         } else if (price === -1) {
             console.log(`Unable to find price for: \n\t${listing.title}\n\t${"https://www.reddit.com" + listing.permalink}`);
+        } else {
+            console.log(`Invalid price found for: \n\t${listing.title}\n\t${"https://www.reddit.com" + listing.permalink}`);
         }
     }
     alertPostCount(validPosts.length);
     scrollTo("#post-count");
     populatePostBoard(validPosts);
-}
-
-// Asynchronously retrieve JSON from URL
-function getJson(url) {
-    let result;
-    $.ajax({
-        url: url,
-        dataType: "json",
-        async: false,
-        success: function (data) {
-            result = data;
-        }
-    });
-    return result;
 }
 
 function formatComments(numComments) {
