@@ -5,10 +5,15 @@
  * Handles functions related to updating the post board
  */
 
-
 const URL_AC = "https://www.reddit.com/r/acturnips/new/.json";
 const URL_EX = "https://www.reddit.com/r/TurnipExchange/new/.json";
 const URL_NH = "https://www.reddit.com/r/ACNHTurnips/new/.json";
+
+// For decoding JSON body response
+const SC_OFF = "<!-- SC_OFF -->";
+const SC_ON = "<!-- SC_ON -->";
+
+const imageLinkPrefixes = ['https://preview.redd.it', 'imgur.com/'];
 
 // Checks if valid input
 function validateInput() {
@@ -131,8 +136,16 @@ function convertWrittenToNumber(token) {
     return num;
 }
 
-const SC_OFF = "<!-- SC_OFF -->";
-const SC_ON = "<!-- SC_ON -->";
+function generateImageTag(content, linkPrefix, title) {
+    let imgIndex1 = content.indexOf(linkPrefix);
+    let imgIndex2 = content.substring(imgIndex1).indexOf('"') + imgIndex1;
+    let imagePreview = content.substring(imgIndex1, imgIndex2);
+
+    if (linkPrefix === 'imgur.com/') {
+        imagePreview = "https://i." + imagePreview + ".png";
+    }
+    return `<br><img src=${imagePreview} alt="${title}" width="100%" height="auto" class="center">`;
+}
 
 function makePostBlock(post, idNum) {
     let content = post.content;
@@ -145,19 +158,11 @@ function makePostBlock(post, idNum) {
         let onIndex = content.indexOf(SC_ON);
         content = content.substring(offIndex, onIndex);
 
-        if (content.includes('href="https://preview.redd.it')) {
-            let imgIndex1 = content.indexOf('https://preview.redd.it');
-            let imgIndex2 = content.substring(imgIndex1).indexOf('"') + imgIndex1;
-            let imagePreview = content.substring(imgIndex1, imgIndex2);
-            imageIndicator = true;
-            content += `<br><img src=${imagePreview} alt="${post.title}" width="100%" height="auto" class="center">`;
-        }
-        if (content.includes('href="https://imgur.com')) {
-            let imgIndex1 = content.indexOf('imgur.com/');
-            let imgIndex2 = content.substring(imgIndex1).indexOf('"') + imgIndex1;
-            let imagePreview = "https://i." + content.substring(imgIndex1, imgIndex2) + ".png";
-            imageIndicator = true;
-            content += `<br><img src=${imagePreview} alt="${post.title}" width="100%" height="auto" class="center">`;
+        for (let linkPrefix of imageLinkPrefixes) {
+            if (content.includes(linkPrefix)) {
+                imageIndicator = true;
+                content += generateImageTag(content, linkPrefix, post.title);
+            }
         }
     } else {
         content = "";
@@ -169,13 +174,6 @@ function makePostBlock(post, idNum) {
     } else if (imageURL.includes("/gallery/")) {
         content += imageURL;
     }
-
-    let arrow = "▼";
-    if (!content) {
-        arrow = "";
-    }
-
-    let imageIcon = imageIndicator ? `<i class="far fa-image"></i>` : "";
 
     let block = `
     <div class="round-block padding-extra active-hover" id="post-${idNum}">
@@ -194,8 +192,8 @@ function makePostBlock(post, idNum) {
         <h3 class="margin-none wrap-break">${post.title}</h3>
         <p class="margin-none wrap-break">${post.user} in ${post.subreddit}</p>
         <p class="margin-none wrap-break"><span style="font-size: small;">${post.comments}</span>
-            <span id="arrow-${idNum}" style="float: right;">${arrow}</span>
-            <span style="float: right; font-size: 1.1rem;">${imageIcon}</span></p>
+            <span id="arrow-${idNum}" style="float: right;">${(content ? "▼" : "")}</span>
+            <span style="float: right; font-size: 1.1rem;">${(imageIndicator ? `<i class="far fa-image"></i>` : "")}</span></p>
         <div id="content-${idNum}" class="panel wrap-break">
             <hr>
             ${content}
@@ -230,7 +228,12 @@ function processPosts(minPrice) {
         let listing = record.data;
 
         let price = identifyPrice(listing.title);
-        if (price >= minPrice && price >= 90) {
+        if (price === -1) {
+            price = "???";
+            console.log(`Unable to find price for: \n\t${listing.title}\n\t${"https://www.reddit.com" + listing.permalink}`);
+        }
+
+        if (price === "???" || (price >= minPrice && price >= 90)) {
             if ((isCheckboxActive() && isHoursLessThan(listing.created_utc, 2)) || !isCheckboxActive()) {
                 let post = new Post(listing, price);
                 validPosts.push(post)
@@ -238,8 +241,6 @@ function processPosts(minPrice) {
                     return b.timestamp - a.timestamp;
                 });
             }
-        } else if (price === -1) {
-            console.log(`Unable to find price for: \n\t${listing.title}\n\t${"https://www.reddit.com" + listing.permalink}`);
         } else {
             console.log(`Invalid price found for: \n\t${listing.title}\n\t${"https://www.reddit.com" + listing.permalink}`);
         }
