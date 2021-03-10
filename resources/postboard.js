@@ -131,33 +131,43 @@ function convertWrittenToNumber(token) {
     return num;
 }
 
-const SC_OFF = "&lt;!-- SC_OFF --&gt;";
-const SC_ON = "&lt;!-- SC_ON --&gt;";
+const SC_OFF = "<!-- SC_OFF -->";
+const SC_ON = "<!-- SC_ON -->";
 
 function makePostBlock(post, idNum) {
     let content = post.content;
-    let imageIndicator = "";
-    if (content.includes(".redd.it") || content.includes("//imgur.com/")) {
-        let index = content.indexOf("https://");
+    let imageURL = post.imageURL;
+    let imageIndicator = false;
 
-        let imgLink = content.substring(index);
-        if (content.includes("//imgur.com/")) {
-            let indexImgur = content.indexOf("imgur.com");
-            imgLink = "http://i." + content.substring(indexImgur) + ".png";
+    if (content) {
+        content = decodeHtml(content);
+        let offIndex = content.indexOf(SC_OFF) + SC_OFF.length;
+        let onIndex = content.indexOf(SC_ON);
+        content = content.substring(offIndex, onIndex);
+
+        if (content.includes('href="https://preview.redd.it')) {
+            let imgIndex1 = content.indexOf('https://preview.redd.it');
+            let imgIndex2 = content.substring(imgIndex1).indexOf('"') + imgIndex1;
+            let imagePreview = content.substring(imgIndex1, imgIndex2);
+            imageIndicator = true;
+            content += `<br><img src=${imagePreview} alt="${post.title}" width="100%" height="auto" class="center">`;
         }
-        content = `<br><img src="${imgLink}" alt="${post.title}" width="100%" height="auto" class="center"></img>`;
-        imageIndicator = `<i class="far fa-image"></i>`;
+        if (content.includes('href="https://imgur.com')) {
+            let imgIndex1 = content.indexOf('imgur.com/');
+            let imgIndex2 = content.substring(imgIndex1).indexOf('"') + imgIndex1;
+            let imagePreview = "https://i." + content.substring(imgIndex1, imgIndex2) + ".png";
+            imageIndicator = true;
+            content += `<br><img src=${imagePreview} alt="${post.title}" width="100%" height="auto" class="center">`;
+        }
+    } else {
+        content = "";
     }
 
-    let htmlContent = post.htmlContent;
-    if (htmlContent) {
-        let offIndex = htmlContent.indexOf(SC_OFF) + SC_OFF.length;
-        let onIndex = htmlContent.indexOf(SC_ON);
-
-        htmlContent = htmlContent.substring(offIndex, onIndex);
-        htmlContent = decodeHtml(htmlContent);
-    } else {
-        htmlContent = "";
+    if (imageURL && !imageURL.includes("/gallery/")) {
+        imageIndicator = true;
+        content += `<br><img src="${imageURL}" alt="${post.title}" width="100%" height="auto" class="center">`;
+    } else if (imageURL.includes("/gallery/")) {
+        content += imageURL;
     }
 
     let arrow = "▼";
@@ -165,9 +175,7 @@ function makePostBlock(post, idNum) {
         arrow = "";
     }
 
-    if (!imageIndicator && htmlContent) {
-        content = "";
-    }
+    let imageIcon = imageIndicator ? `<i class="far fa-image"></i>` : "";
 
     let block = `
     <div class="round-block padding-extra active-hover" id="post-${idNum}">
@@ -187,10 +195,9 @@ function makePostBlock(post, idNum) {
         <p class="margin-none wrap-break">${post.user} in ${post.subreddit}</p>
         <p class="margin-none wrap-break"><span style="font-size: small;">${post.comments}</span>
             <span id="arrow-${idNum}" style="float: right;">${arrow}</span>
-            <span style="float: right; font-size: 1.1rem;">${imageIndicator}</span></p>
+            <span style="float: right; font-size: 1.1rem;">${imageIcon}</span></p>
         <div id="content-${idNum}" class="panel wrap-break">
             <hr>
-            ${htmlContent}
             ${content}
         </div>
     </div>
@@ -253,10 +260,10 @@ function Post(listing, price) {
     this.link = "https://www.reddit.com" + listing.permalink;
     this.user = listing.author;
     this.comments = formatComments(listing.num_comments);
-    this.content = (listing.selftext) ? (listing.selftext) : (listing.url_overridden_by_dest) ? (listing.url_overridden_by_dest) : "";
     this.timestamp = listing.created_utc;
     this.timeString = getTimeAgo(this.timestamp);
-    this.htmlContent = listing.selftext_html;
+    this.content = (listing.selftext_html) ? (listing.selftext_html) : "";
+    this.imageURL = (listing.url_overridden_by_dest) ? (listing.url_overridden_by_dest) : "";
 }
 
 function getSecondsFromTimestamp(ts) {

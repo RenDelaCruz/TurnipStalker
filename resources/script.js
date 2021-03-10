@@ -19,7 +19,7 @@ $("#top-button").click(function () {
 // Toggle slide for each post
 $(document).on("click", "div[id^='post-']", function () {
     var num = this.id.split('-')[1];
-    scrollTo('#post-' + num);
+    //scrollTo('#post-' + num);
 
     if ($('#arrow-' + num).text()) {
         $('#arrow-' + num).text(function () {
