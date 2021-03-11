@@ -44,8 +44,8 @@ function decodeHtml(input) {
     return e.childNodes[0].nodeValue;
 }
 
-function isCheckboxActive() {
-    return $("#recent-check").is(":checked");
+function getTimeMenuSelection() {
+    return $("#time-menu").val();
 }
 
 // Asynchronously retrieve JSON from URL

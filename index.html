@@ -33,11 +33,19 @@
         <img src="resources/turnip.png" alt="Turnip" width="150px" height="150px" class="margin-extra-y center">
         <h3>Enter the minimum price:</h3>
         <input type="text" id="input-price" name="input-price" placeholder="Bells"><br>
-        <label class="container">Posted within 2 hours
-            <input type="checkbox" id="recent-check" name="recent-check" checked>
-            <span class="checkmark"></span>
-        </label>
-        <button type="button" id="price-button" name="price-button" onclick="validateInput()">
+
+        <div style="margin-top: -0.5rem;">
+            <h3>Posted within:</h3>
+            <select id="time-menu" style="margin: -2rem auto 0.5rem;">
+                <option value="0.5">30 minutes</option>
+                <option value="1">1 hour</option>
+                <option value="2" selected>2 hours</option>
+                <option value="3">3 hours</option>
+                <option value="-1">No Limit</option>
+            </select>
+        </div>
+
+        <button style="width: 12rem;" type="button" id="price-button" name="price-button" onclick="validateInput()">
             <h2>Check &#10132;</h2>
         </button>
     </div>

@@ -177,7 +177,7 @@ function makePostBlock(post, idNum) {
 
     let block = `
     <div class="round-block padding-extra active-hover" id="post-${idNum}">
-        <div class="tag-container ">
+        <div class="tag-container">
             <div class="tag yellow">
                 <strong>${post.price} Bells</strong>
             </div>
@@ -227,22 +227,23 @@ function processPosts(minPrice) {
     for (let record of info) {
         let listing = record.data;
 
-        let price = identifyPrice(listing.title);
-        if (price === -1) {
-            price = "???";
-            console.log(`Unable to find price for: \n\t${listing.title}\n\t${"https://www.reddit.com" + listing.permalink}`);
-        }
+        let timeLimit = getTimeMenuSelection();
+        if (timeLimit == -1 || (isHoursLessThan(listing.created_utc, timeLimit))) {
+            let price = identifyPrice(listing.title);
+            if (price === -1) {
+                price = "???";
+                console.log(`Unable to find price for: \n\t${listing.title}\n\t${"https://www.reddit.com" + listing.permalink}`);
+            }
 
-        if (price === "???" || (price >= minPrice && price >= 90)) {
-            if ((isCheckboxActive() && isHoursLessThan(listing.created_utc, 2)) || !isCheckboxActive()) {
+            if (price === "???" || (price >= minPrice && price >= 90)) {
                 let post = new Post(listing, price);
                 validPosts.push(post)
                 validPosts.sort(function (a, b) {
                     return b.timestamp - a.timestamp;
                 });
+            } else {
+                console.log(`Invalid price found for: \n\t${listing.title}\n\t${"https://www.reddit.com" + listing.permalink}`);
             }
-        } else {
-            console.log(`Invalid price found for: \n\t${listing.title}\n\t${"https://www.reddit.com" + listing.permalink}`);
         }
     }
     alertPostCount(validPosts.length);
