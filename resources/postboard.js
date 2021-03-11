@@ -167,15 +167,17 @@ function makePostBlock(post, idNum) {
     } else {
         content = "";
     }
-
+    
     if (["/r/", "/comments/"].some(e => imageURL.includes(e))) {
-        content += imageURL;
+        content += `X-post: <a href="https://www.reddit.com${imageURL}" target="_blank">${imageURL}</a>`;
         post.price = identifyPrice(imageURL);
-    } else if (imageURL && !imageURL.includes("/gallery/")) {
+    } else if (!imageURL.includes("/gallery/") && ["i.redd.it", "i.imgur.com"].some(e => imageURL.includes(e))) {
         imageIndicator = true;
         content += `<br><img src="${imageURL}" alt="${post.title}" width="100%" height="auto" class="center">`;
     } else if (imageURL.includes("/gallery/")) {
-        content += imageURL;
+        content += `<a href="${imageURL} target="_blank">${imageURL}</a>`;
+    } else if (imageURL) {
+        content += `<a href="${imageURL} target="_blank">${imageURL}</a>`;
     }
 
     let block = `
