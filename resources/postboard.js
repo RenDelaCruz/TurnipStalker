@@ -45,7 +45,7 @@ function identifyPrice(title) {
         }
     }
 
-    if (possibleNums.length === 1 && possibleNums[0] >= 90) {
+    if (possibleNums.length === 1 && validPriceRange(possibleNums[0])  >= 90 && possibleNums[0] <= 660) {
         return possibleNums[0];
     } else if (possibleNums.length === 3 && possibleNums.every(function (e) { return e < 10 })) {
         return parseInt(possibleNums.join(""));
@@ -112,7 +112,7 @@ function convertWrittenToNumber(token) {
     token = token.toLowerCase();
 
     let num = -1;
-    if (token == "zero") {
+    if (token == "zero" || token == "oh" || token == "o") {
         num = 0;
     } else if (token == "one") {
         num = 1;
@@ -168,7 +168,10 @@ function makePostBlock(post, idNum) {
         content = "";
     }
 
-    if (imageURL && !imageURL.includes("/gallery/")) {
+    if (["/r/", "/comments/"].some(e => imageURL.includes(e))) {
+        content += imageURL;
+        post.price = identifyPrice(imageURL);
+    } else if (imageURL && !imageURL.includes("/gallery/")) {
         imageIndicator = true;
         content += `<br><img src="${imageURL}" alt="${post.title}" width="100%" height="auto" class="center">`;
     } else if (imageURL.includes("/gallery/")) {
@@ -192,8 +195,8 @@ function makePostBlock(post, idNum) {
         <h3 class="margin-none wrap-break">${post.title}</h3>
         <p class="margin-none wrap-break">${post.user} in ${post.subreddit}</p>
         <p class="margin-none wrap-break"><span style="font-size: small;">${post.comments}</span>
-            <span id="arrow-${idNum}" style="float: right;">${(content ? "▼" : "")}</span>
-            <span style="float: right; font-size: 1.1rem;">${(imageIndicator ? `<i class="far fa-image"></i>` : "")}</span></p>
+            <span id="arrow-${idNum}" style="float: right; font-size: 0.9rem">${(content ? "▼" : "")}</span>
+            <span style="float: right; font-size: 1rem;">${(imageIndicator ? `<i class="far fa-image"></i>` : "")}</span></p>
         <div id="content-${idNum}" class="panel wrap-break">
             <hr>
             ${content}
@@ -224,6 +227,9 @@ function processPosts(minPrice) {
     let info = combineJson(URL_AC, URL_EX, URL_NH);
     let validPosts = [];
 
+    let validCount = 0;
+    let unreadableCount = 0;
+
     for (let record of info) {
         let listing = record.data;
 
@@ -236,6 +242,12 @@ function processPosts(minPrice) {
             }
 
             if (price === "???" || (price >= minPrice && price >= 90)) {
+                if (price === "???") {
+                    unreadableCount++;
+                } else {
+                    validCount++;
+                }
+
                 let post = new Post(listing, price);
                 validPosts.push(post)
                 validPosts.sort(function (a, b) {
@@ -246,7 +258,7 @@ function processPosts(minPrice) {
             }
         }
     }
-    alertPostCount(validPosts.length);
+    alertPostCount(validCount, unreadableCount);
     scrollTo("#post-count");
     populatePostBoard(validPosts);
 }

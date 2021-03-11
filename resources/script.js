@@ -72,10 +72,10 @@ function combineJson(...urls) {
     return combinedInfo;
 }
 
-function alertPostCount(count) {
-    let postCountAlert = "Posts found: " + count;
+function alertPostCount(validCount, unreadableCount) {
+    let postCountAlert = `Posts found: ${validCount}<br>Unreadable posts: ${unreadableCount}`;
     $("#post-count").html(postCountAlert);
-    alert(postCountAlert);
+    alert(`Posts found: ${validCount}\nUnreadable posts: ${unreadableCount}`);
 }
 
 function scrollTo(id) {
