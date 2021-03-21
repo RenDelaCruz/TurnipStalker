@@ -174,8 +174,6 @@ function makePostBlock(post, idNum) {
     } else if (!imageURL.includes("/gallery/") && ["i.redd.it", "i.imgur.com"].some(e => imageURL.includes(e))) {
         imageIndicator = true;
         content += `<br><img src="${imageURL}" alt="${post.title}" width="100%" height="auto" class="center">`;
-    } else if (imageURL.includes("/gallery/")) {
-        content += `<a href="${imageURL} target="_blank">${imageURL}</a>`;
     } else if (imageURL) {
         content += `<a href="${imageURL} target="_blank">${imageURL}</a>`;
     }
