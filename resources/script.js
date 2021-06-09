@@ -75,7 +75,7 @@ function combineJson(...urls) {
 function alertPostCount(validCount, unreadableCount) {
     let postCountAlert = `Posts found: ${validCount}<br>Unreadable posts: ${unreadableCount}`;
     $("#post-count").html(postCountAlert);
-    alert(`Posts found: ${validCount}\nUnreadable posts: ${unreadableCount}`);
+    //alert(`Posts found: ${validCount}\nUnreadable posts: ${unreadableCount}`);
 }
 
 function scrollTo(id) {
