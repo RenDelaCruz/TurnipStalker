@@ -16,16 +16,26 @@ const SC_ON = "<!-- SC_ON -->";
 const imageLinkPrefixes = ['https://preview.redd.it', 'imgur.com/'];
 
 // Checks if valid input
-function validateInput() {
+function validateInput(refresh = false) {
     let price = $("#input-price").val();
     if (isPositiveInteger(price)) {
-        // Main processing function to output posts
-        processPosts(parseInt(price));
-        $("#input-price").blur();
+        if (refresh) {
+            alert("Refreshing search every 30 seconds.")
+            startSearch(price, refresh);
+            setInterval(function () { startSearch(price) }, 30000);
+        } else {
+            startSearch(price, refresh)
+        }
     } else {
         alert("This is not a valid price.");
     }
-    $("#input-price").val("");
+    //$("#input-price").val("");
+}
+
+function startSearch(price, refresh) {
+    // Main processing function to output posts
+    processPosts(parseInt(price), refresh);
+    $("#input-price").blur();
 }
 
 // Removes punctuation and returns split string
@@ -45,7 +55,7 @@ function identifyPrice(title) {
         }
     }
 
-    if (possibleNums.length === 1 && validPriceRange(possibleNums[0])  >= 90 && possibleNums[0] <= 660) {
+    if (possibleNums.length === 1 && validPriceRange(possibleNums[0]) >= 90 && possibleNums[0] <= 660) {
         return possibleNums[0];
     } else if (possibleNums.length === 3 && possibleNums.every(function (e) { return e < 10 })) {
         return parseInt(possibleNums.join(""));
@@ -167,7 +177,7 @@ function makePostBlock(post, idNum) {
     } else {
         content = "";
     }
-    
+
     if (["/r/", "/comments/"].some(e => imageURL.includes(e))) {
         content += `X-post: <a href="https://www.reddit.com${imageURL}" target="_blank">${imageURL}</a>`;
         post.price = identifyPrice(imageURL);
@@ -223,7 +233,7 @@ function populatePostBoard(postList) {
     }
 }
 
-function processPosts(minPrice) {
+function processPosts(minPrice, refresh) {
     let info = combineJson(URL_AC, URL_EX, URL_NH);
     let validPosts = [];
 
@@ -258,7 +268,7 @@ function processPosts(minPrice) {
             }
         }
     }
-    alertPostCount(validCount, unreadableCount);
+    alertPostCount(validCount, unreadableCount, refresh);
     scrollTo("#post-count");
     populatePostBoard(validPosts);
 }
