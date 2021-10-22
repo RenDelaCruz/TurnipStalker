@@ -73,7 +73,7 @@ function combineJson(...urls) {
 }
 
 function alertPostCount(validCount, unreadableCount, refresh) {
-    let postCountAlert = `Posts found: ${validCount}<br>Unreadable posts: ${unreadableCount}`;
+    let postCountAlert = `Valid posts: ${validCount}<br>Unreadable posts: ${unreadableCount}`;
     $("#post-count").html(postCountAlert);
 
     // if (!refresh) {

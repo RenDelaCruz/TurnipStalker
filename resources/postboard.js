@@ -21,8 +21,6 @@ let intervals = [];
 function validateInput(refresh = false) {
     let price = $("#input-price").val();
     if (isPositiveInteger(price)) {
-        resetTimer();
-
         if (refresh) {
             //alert("Refreshing search every 60 seconds.")
             startSearch(price, refresh);
@@ -44,6 +42,8 @@ function resetTimer() {
 }
 
 function startSearch(price, refresh) {
+    resetTimer();
+
     // Main processing function to output posts
     if (refresh) {
         intervals.push(countDown(60));
