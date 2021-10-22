@@ -76,14 +76,24 @@ function alertPostCount(validCount, unreadableCount, refresh) {
     let postCountAlert = `Posts found: ${validCount}<br>Unreadable posts: ${unreadableCount}`;
     $("#post-count").html(postCountAlert);
 
-    if (!refresh) {
-        alert(`Posts found: ${validCount}\nUnreadable posts: ${unreadableCount}`);
-    }
+    // if (!refresh) {
+    //     alert(`Posts found: ${validCount}\nUnreadable posts: ${unreadableCount}`);
+    // }
+}
+
+function countDown(i) {
+    let interval = setInterval(function () {
+        let refresher = document.getElementById("refresher");
+        refresher.innerHTML = `<b>Refreshing in ${i} second${i !== 1 ? "s" : ""} ...</b><br><br>`;
+        i-- || clearInterval(interval);  //if i is 0, then stop the interval
+    }, 1000);
+
+    return interval
 }
 
 function scrollTo(id) {
     $("html, body").animate({
-        scrollTop: $(id).offset().top
+        scrollTop: $(id).offset().top - 20
     }, 1000);
 }
 

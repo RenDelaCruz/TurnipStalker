@@ -15,14 +15,18 @@ const SC_ON = "<!-- SC_ON -->";
 
 const imageLinkPrefixes = ['https://preview.redd.it', 'imgur.com/'];
 
+let intervals = [];
+
 // Checks if valid input
 function validateInput(refresh = false) {
     let price = $("#input-price").val();
     if (isPositiveInteger(price)) {
+        resetTimer();
+
         if (refresh) {
-            alert("Refreshing search every 30 seconds.")
+            //alert("Refreshing search every 60 seconds.")
             startSearch(price, refresh);
-            setInterval(function () { startSearch(price) }, 30000);
+            intervals.push(setInterval(function () { startSearch(price, refresh); }, 60000));
         } else {
             startSearch(price, refresh)
         }
@@ -32,8 +36,19 @@ function validateInput(refresh = false) {
     //$("#input-price").val("");
 }
 
+function resetTimer() {
+    intervals.forEach((interval) => {
+        clearInterval(interval);
+    });
+    document.getElementById("refresher").innerHTML = "";
+}
+
 function startSearch(price, refresh) {
     // Main processing function to output posts
+    if (refresh) {
+        intervals.push(countDown(60));
+    }
+    console.clear();
     processPosts(parseInt(price), refresh);
     $("#input-price").blur();
 }
@@ -269,7 +284,7 @@ function processPosts(minPrice, refresh) {
         }
     }
     alertPostCount(validCount, unreadableCount, refresh);
-    scrollTo("#post-count");
+    scrollTo("#refresher");
     populatePostBoard(validPosts);
 }
 
