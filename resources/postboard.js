@@ -38,6 +38,7 @@ function resetTimer() {
     intervals.forEach((interval) => {
         clearInterval(interval);
     });
+    intervals = [];
     document.getElementById("refresher").innerHTML = "";
 }
 
